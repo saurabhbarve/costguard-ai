@@ -139,16 +139,3 @@ If similar leakage continues monthly:
 
 ### Personal Lens
 This solution is especially meaningful from a Business Analyst point of view because it combines process design, operational control, decision logic, and measurable ROI in one use case.
-
----
-
-## Short Notes For Submission Document
-If you need this as a 1-2 page architecture note, keep these sections:
-
-1. Problem
-2. Solution overview
-3. Agent architecture
-4. Data flow
-5. Approval workflow
-6. Impact model
-7. Scalability and enterprise fit
