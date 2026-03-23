@@ -1,0 +1,4 @@
+process_name,tickets_at_risk,risk_score,penalty_if_breached
+Customer Support Queue A,18,84,60000
+Implementation Queue B,7,52,30000
+Claims Processing Queue,11,79,45000

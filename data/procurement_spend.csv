@@ -1,0 +1,6 @@
+vendor,invoice_id,invoice_amount,invoice_month,current_rate,benchmark_rate,monthly_units
+CloudNova,INV-1001,50000,2026-02,12,10,6000
+CloudNova,INV-1002,50000,2026-02,12,10,6000
+DataBridge,INV-1003,80000,2026-02,22,18,4000
+OpsSuite,INV-1004,45000,2026-02,15,14,2500
+Printix,INV-1005,30000,2026-02,8,8,2000
