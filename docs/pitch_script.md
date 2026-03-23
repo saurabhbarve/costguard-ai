@@ -31,6 +31,11 @@ It is an AI system that checks enterprise data continuously, finds cost leakage,
 So this is not only a dashboard.
 It is a system that can detect, decide, and act.
 
+I come from a Business Analyst background in the insurance domain, so I approached this solution from a real enterprise workflow perspective.
+
+In my experience, process delays, missed checks, workflow gaps, and operational inefficiencies create both cost impact and customer impact.
+That is why I focused this solution on practical business control, not only analytics.
+
 Here is how it works.
 
 First, it reads data from procurement, software usage, and operations systems.
@@ -64,6 +69,8 @@ This creates clear business value:
 - measurable ROI
 
 CostPilot AI can start with one department, like procurement or customer support, and later scale across the enterprise.
+
+It can also be very relevant in insurance operations, where claims workflows, reconciliation checks, partner coordination, and SLA management all directly affect efficiency and cost.
 
 So in one line:
 CostPilot AI helps companies move from late reporting to early action.

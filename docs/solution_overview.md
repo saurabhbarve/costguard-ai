@@ -3,6 +3,15 @@
 ## Proposed Solution Name
 CostPilot AI: Enterprise Cost Intelligence and Autonomous Action System
 
+## Why This Problem Matters
+I selected this problem because it reflects a very practical enterprise challenge.
+
+In most organizations, cost leakage is not always visible in real time. Teams usually identify these issues after the reporting cycle, which means the business often reacts too late.
+
+I wanted to design a solution that does more than report the problem. I wanted it to show how AI can help detect the issue early and also support the next business action.
+
+My own background in insurance operations and business analysis made this problem especially relevant to me. In claims and operations environments, delays, manual intervention, reconciliation gaps, and missed SLAs can all create direct cost leakage and service issues.
+
 ## Problem Fit
 The hackathon asks for an AI system that does 3 things:
 
@@ -10,12 +19,12 @@ The hackathon asks for an AI system that does 3 things:
 2. Identify cost leakage or inefficiency patterns
 3. Take corrective action with measurable financial impact
 
-This solution directly fits that requirement.
+This solution is built directly around those 3 expectations.
 
 ## Simple Business Explanation
-Think of this solution as an "AI cost control manager."
+I think of this solution as an AI-powered cost control manager.
 
-Instead of waiting for monthly reports, it checks spending and operations data every day. When it finds waste, such as duplicate invoices, expensive vendor rates, unused licenses, or upcoming SLA penalties, it recommends or triggers the next action automatically.
+Instead of waiting for a monthly review, the system checks spending and operations data continuously. When it finds waste, such as duplicate invoices, expensive vendor rates, unused licenses, or approaching SLA penalties, it raises the issue, estimates the impact, and recommends or triggers the next action.
 
 ## Core Use Cases
 - Duplicate invoice detection
@@ -53,9 +62,22 @@ flowchart TD
 - Unused licenses removed: INR 56,400 monthly saved
 - SLA penalty prevented: INR 48,000 saved
 
-## Why This Can Win
-- Shows real business value
-- Goes beyond dashboards
-- Includes autonomous action
-- Provides savings math
-- Fits enterprise approval workflows
+## My View As A Business Analyst
+From a Business Analyst perspective, the strength of this solution is not only the AI layer.
+
+The real value comes from:
+- identifying the right leakage scenarios
+- designing the workflow logic
+- deciding when human approval is needed
+- connecting every action to measurable business impact
+
+That is what makes the idea realistic for enterprise adoption.
+
+My experience in claims automation, stakeholder requirement gathering, reporting, and UAT shaped this thinking. I wanted the solution to feel usable in an actual enterprise setting rather than only sound technically impressive.
+
+## Why This Can Stand Out
+- It shows real business value
+- It goes beyond dashboards and reporting
+- It includes action and approval logic
+- It provides measurable savings math
+- It fits enterprise governance and workflow needs

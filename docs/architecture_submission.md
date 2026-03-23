@@ -137,6 +137,9 @@ If similar leakage continues monthly:
 - works with enterprise approval workflows
 - easy to pilot in one function and scale later
 
+### Personal Lens
+This solution is especially meaningful from a Business Analyst point of view because it combines process design, operational control, decision logic, and measurable ROI in one use case.
+
 ---
 
 ## Short Notes For Submission Document
