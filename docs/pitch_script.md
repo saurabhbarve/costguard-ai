@@ -1,4 +1,4 @@
-# 3-Minute Hackathon Pitch Script
+
 
 ## Title
 CostPilot AI: Enterprise Cost Intelligence and Autonomous Action
@@ -76,11 +76,3 @@ So in one line:
 CostPilot AI helps companies move from late reporting to early action.
 
 Thank you.
-
-## Simple Demo Flow To Follow While Speaking
-1. Introduce the cost leakage problem
-2. Explain the 4 use cases
-3. Run the script
-4. Show the savings report
-5. Explain approval workflow
-6. Close with business impact
