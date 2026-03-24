@@ -269,7 +269,7 @@ def ai_explanation(case: AgentCase) -> str:
 
 def ai_prestart_message(case: AgentCase) -> str:
     return (
-        f"This case is ready for review. Select Run Case to let the agents process the issue step by step."
+        f"This case is ready for review."
     )
 
 
@@ -737,7 +737,7 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
 <body>
   <div class="wrap">
     <div class="hero">
-      <div class="eyebrow">Analysis Complete</div>
+      <div class="eyebrow">Results</div>
       <h1>Simple Multi-Agent Cost Control Demo</h1>
       <div class="sub">A simple view of how agents move a case from detection to action.</div>
       <div class="top-grid">
@@ -752,12 +752,12 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
             <div class="summary-value">{len(findings)}</div>
           </div>
           <div class="summary-card">
-            <div class="summary-label">Workflow Style</div>
-            <div class="summary-value">Agent-to-Agent</div>
+            <div class="summary-label">Agent Flow</div>
+            <div class="summary-value">Connected</div>
           </div>
           <div class="summary-card">
-            <div class="summary-label">Decision Model</div>
-            <div class="summary-value">Approval Based</div>
+            <div class="summary-label">Approval Model</div>
+            <div class="summary-value">Controlled</div>
           </div>
         </div>
       </div>
@@ -770,22 +770,22 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
     </div>
 
     <div class="panel">
-      <div class="eyebrow">How This Works</div>
-      <h2>Each Agent Has One Simple Job</h2>
+      <div class="eyebrow">Agents</div>
+      <h2>Agent Roles</h2>
       <div class="agent-grid">
         {agent_cards_html}
       </div>
     </div>
 
     <div class="panel">
-      <div class="eyebrow">Impact View</div>
+      <div class="eyebrow">Impact</div>
       <h2>Savings by Category</h2>
       {chart_rows}
     </div>
 
     <div class="panel">
-      <div class="eyebrow">Case Walkthrough</div>
-      <h2>Choose One Case And Watch The Agent Flow</h2>
+      <div class="eyebrow">Cases</div>
+      <h2>Select a Case</h2>
       <div class="simple-grid">
         <div>
           <div class="case-tabs">

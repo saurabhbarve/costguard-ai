@@ -2,220 +2,122 @@
 
 AI for Enterprise Cost Intelligence and Autonomous Action
 
-This project was created as my solution for Problem Statement 3 of the ET AI Hackathon 2026:
+My solution for Problem Statement 3 of the ET AI Hackathon 2026:
 
 `AI for Enterprise Cost Intelligence & Autonomous Action`
 
-I come from a Business Analyst background with experience in the insurance domain, so I approached this problem from a business-value, workflow-control, and process-improvement angle rather than only from a coding angle.
+## Problem Statement
+Build an AI system that goes beyond dashboards. It should continuously monitor enterprise operations data, identify cost leakage or inefficiency patterns, and initiate corrective actions with quantifiable financial impact.
 
-My core idea was simple:
-many enterprises do not lose money because of one large failure. They lose money through repeated leakages like duplicate invoices, poor vendor pricing, unused licenses, and avoidable SLA penalties.
+## Solution Overview
+CostPilot AI is a multi-agent prototype that detects enterprise cost leakage, estimates business impact, and shows how a case moves from detection to action inside an approval-based workflow.
 
-CostPilot AI is a starter solution that shows how an AI-driven system can detect those issues early, recommend the next action, and estimate the financial impact in a practical way.
+The solution focuses on:
+- duplicate invoice detection
+- vendor rate optimization
+- unused software license detection
+- SLA breach and penalty prevention
 
-My work experience in claims-related process automation, requirement gathering, workflow design, SQL-based analysis, reporting, and UAT strongly influenced how I thought about this solution. I wanted to build something that looks realistic from an enterprise operations point of view.
+## Prototype
+This repository includes a working local browser prototype.
 
-## What This Project Does
-- Detects possible duplicate invoices
-- Finds vendor rate optimization opportunities
-- Finds unused software licenses
-- Detects SLA breach risks before penalties happen
-- Creates a business-style impact report
+### Run The Prototype
+```bash
+cd "/Users/saurabhbarve/Documents/New project"
+python3 app/web_app.py
+```
 
-## Why I Chose This Problem
-I chose this problem because it sits at the intersection of business operations, cost control, and decision-making.
+Open in browser:
+```text
+http://127.0.0.1:8000
+```
 
-As a Business Analyst, this is the kind of challenge where I can add the most value:
-- identify process inefficiencies
-- define business rules
-- map approval workflows
-- connect actions to measurable business outcomes
+### What The Prototype Includes
+- upload-based CSV testing flow
+- sample analysis mode
+- case-by-case agent workflow
+- approval simulation
+- downloadable report and dashboard
 
-For me, this problem is not just about AI.
-It is about using AI in a way that is useful, measurable, and realistic for enterprise teams.
+### Run The Analysis Script
+```bash
+cd "/Users/saurabhbarve/Documents/New project"
+python3 app/main.py
+```
 
-## Why I Am A Good Fit For This Problem
-My background is in insurance operations and business analysis, where process delays, workflow gaps, and manual checks directly affect both cost and customer experience.
+## Multi-Agent Workflow
+- Monitoring Agent
+- Impact Agent
+- Decision Agent
+- Approval Agent
+- Action Agent
+- Audit Agent
 
-In my professional work, I have been involved in:
-- claims workflow improvement
-- process automation
-- requirement gathering and documentation
-- stakeholder coordination
-- data analysis through SQL and Power BI
-- UAT and production readiness
-
-Because of that, I relate strongly to this problem statement.
-I understand that enterprise AI is only useful when it fits into real workflows, approval structures, and measurable business KPIs.
+## Setup Instructions
+1. Install Python 3 if required
+2. Open Terminal
+3. Go to the project folder
+4. Run `python3 app/web_app.py`
+5. Open `http://127.0.0.1:8000`
 
 ## Folder Structure
 ```text
-app/      -> main Python logic
-data/     -> sample CSV data
-docs/     -> solution explanation
-output/   -> generated report after running the code
+app/      -> application logic and browser prototype
+data/     -> sample CSV datasets
+docs/     -> pitch, architecture, and supporting material
+output/   -> generated dashboard/report output
 ```
 
 ## Tech Stack
 - Python 3
-- CSV files for sample input
-- Markdown output report
+- CSV datasets
+- HTML/CSS/JavaScript prototype UI
+- Markdown report output
 
-## How To Run This Project
+## Architecture Summary
+The workflow is designed as a connected agent system:
+- one agent identifies the issue
+- one agent calculates the impact
+- one agent recommends the next step
+- one agent manages approval logic
+- one agent prepares the action
+- one agent logs the workflow
 
-### Step 1: Install Python
-Check if Python is already installed:
+## Impact Model
+The prototype estimates savings using simple business logic:
+- duplicate invoice savings = blocked duplicate payment amount
+- vendor savings = benchmark gap x usage
+- license savings = inactive licenses x monthly license cost
+- SLA savings = avoided penalty exposure
 
-```bash
-python3 --version
-```
-
-If you see a version number, you are ready.
-
-### Step 2: Open this project folder
-In terminal:
-
-```bash
-cd "/Users/saurabhbarve/Documents/New project"
-```
-
-### Step 3: Run the program
-```bash
-python3 app/main.py
-```
-
-### Step 4: See the report
-The report will also be saved here:
-
-`output/cost_intelligence_report.md`
-
-## Sample Output
-- Total identified monthly savings
-- List of problems found
-- Recommended action for each problem
-- Estimated savings for each action
-
-## Real-Life Implementation Plan
-
-### Phase 1: Start Small
-1. Pick one department first, like procurement or customer support.
-2. Collect 3 data sources only:
-   - invoice data
-   - vendor contract rates
-   - SLA or ticket data
-3. Define 3 cost leakage problems to solve first.
-
-### Phase 2: Build The Detection Layer
-1. Connect data from ERP, ticketing, and SaaS tools.
-2. Clean the data and standardize vendor names, dates, and cost fields.
-3. Build rules and AI checks for:
-   - duplicate invoices
-   - high vendor rates
-   - low software usage
-   - upcoming SLA breaches
-
-### Phase 3: Add Decision Intelligence
-1. For each finding, define the next best action.
-2. Add business rules:
-   - low-risk actions can be auto-created as tasks
-   - medium-risk actions go for manager approval
-   - high-risk actions go to finance or operations head
-
-### Phase 4: Add Action Layer
-1. Create approval workflows in email, Slack, Teams, or ticketing systems.
-2. Trigger actions automatically after approval.
-3. Log every action for audit purposes.
-
-### Phase 5: Measure Business Impact
-1. Track money saved every month.
-2. Track penalties avoided.
-3. Track cycle time reduced.
-4. Compare before vs after implementation.
-
-## Practical Solution For Hackathon Presentation
-
-### Problem
-Enterprises lose money because waste is found too late.
-
-### Solution
-CostPilot AI monitors operations daily, detects leakage, and starts corrective action automatically.
-
-### Value
-- Lower operational cost
-- Faster action
-- Better control and auditability
-- Clear ROI
-
-## My Business Assumptions
-This project uses sample data, so the savings numbers are directional and meant for demonstration.
-
-The assumptions behind the model are:
+## Assumptions
 - duplicate invoices can be prevented before payment is processed
-- high vendor rates can be reduced through renegotiation or vendor shift
+- vendor rates can be improved through renegotiation or vendor shift
 - inactive licenses can be removed in the next billing cycle
-- high-risk SLA cases can be escalated in time to avoid part or all of the penalty
+- high-risk SLA cases can be escalated early enough to reduce or avoid penalty impact
 
-In a real enterprise implementation, these assumptions would be validated with finance, procurement, and operations teams.
+## Business Context
+I approached this problem from a Business Analyst perspective with insurance-domain experience in workflow improvement, reporting, process control, and operational efficiency.
 
-## Insurance-Domain Relevance
-Although this solution is designed as a general enterprise cost intelligence system, it is highly relevant to insurance operations as well.
+## Insurance Relevance
+This design is also relevant to insurance operations:
+- duplicate claim-related payments
+- SLA risks in claims processing queues
+- reconciliation mismatches
+- partner and vendor inefficiencies
 
-Examples in insurance environments could include:
-- identifying duplicate claim-related payments
-- tracking SLA risks in claims processing queues
-- finding reconciliation mismatches across insurer systems
-- highlighting vendor or partner process inefficiencies
-- reducing manual review effort through workflow-based actioning
-
-This is one reason I found the problem especially meaningful from my own professional background.
-
-## How To Upload This To GitHub
-
-### Step 1: Create a GitHub account
-Go to [GitHub](https://github.com/) and create an account if you do not have one.
-
-### Step 2: Create a new repository
-Repository name suggestion:
-
-`costpilot-ai`
-
-Keep it Public.
-
-### Step 3: In terminal, run these commands
-```bash
-cd "/Users/saurabhbarve/Documents/New project"
-git status
-git add .
-git commit -m "Add CostPilot AI hackathon starter project"
-git branch -M main
-git remote add origin YOUR_GITHUB_REPO_URL
-git push -u origin main
-```
-
-Replace `YOUR_GITHUB_REPO_URL` with your GitHub repository URL.
-
-Example:
-```bash
-git remote add origin https://github.com/yourname/costpilot-ai.git
-```
-
-## Suggested Demo Flow
-1. Explain the business problem in simple terms
-2. Show the sample data files
-3. Run the Python program
-4. Show the report generated
-5. Explain how approvals and auto-actions would work in a real company
-6. Show the savings math
-
-## Important Note
-This is a starter version built for hackathon demonstration. In a real company, the same design could be connected to:
+## Enterprise Extensions
+In a production environment, the same model could connect to:
 - SAP / Oracle / ERP systems
 - ServiceNow / Jira / Zendesk
 - Slack / Teams / Email approvals
 - SaaS admin tools
-- Audit logs and dashboards
+- audit logs and dashboards
 
-## Final Thought
-The main purpose of this project is to show that enterprise AI should not stop at insights and dashboards.
-
-If the system can detect leakage, estimate impact, and trigger the next best action within a controlled workflow, then it can create real business value.
+## Hackathon Repository Fit
+This repository includes:
+- source code
+- setup instructions
+- a working prototype
+- supporting architecture and pitch material in `docs/`
+- commit history showing the build process
