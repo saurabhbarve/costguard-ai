@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import html
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -21,9 +22,29 @@ class Finding:
     confidence: str
 
 
+@dataclass
+class AgentStep:
+    agent: str
+    status: str
+    response: str
+
+
+@dataclass
+class AgentCase:
+    finding: Finding
+    steps: list[AgentStep]
+    approval_required: bool
+    final_action: str
+    audit_note: str
+
+
 def read_csv(file_path: Path) -> list[dict[str, str]]:
     with file_path.open("r", encoding="utf-8-sig", newline="") as file:
         return list(csv.DictReader(file))
+
+
+def read_csv_text(text: str) -> list[dict[str, str]]:
+    return list(csv.DictReader(text.splitlines()))
 
 
 def to_float(value: str) -> float:
@@ -191,26 +212,286 @@ def build_report(findings: list[Finding]) -> str:
     return "\n".join(lines)
 
 
+def build_html_dashboard(findings: list[Finding]) -> str:
+    total = sum(item.estimated_savings for item in findings)
+    summary = generate_summary(findings)
+
+    summary_cards = "\n".join(
+        f"""
+        <div class="card">
+          <div class="label">{html.escape(category)}</div>
+          <div class="value">INR {value:,.0f}</div>
+        </div>
+        """
+        for category, value in summary.items()
+    )
+
+    finding_cards = "\n".join(
+        f"""
+        <div class="finding">
+          <h3>{index}. {html.escape(finding.title)}</h3>
+          <p><strong>Category:</strong> {html.escape(finding.category)}</p>
+          <p><strong>Issue:</strong> {html.escape(finding.issue)}</p>
+          <p><strong>Action:</strong> {html.escape(finding.action)}</p>
+          <p><strong>Estimated monthly savings:</strong> INR {finding.estimated_savings:,.0f}</p>
+          <p><strong>Confidence:</strong> {html.escape(finding.confidence)}</p>
+        </div>
+        """
+        for index, finding in enumerate(findings, start=1)
+    )
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CostPilot AI Dashboard</title>
+  <style>
+    :root {{
+      --bg: #f5f1e8;
+      --panel: #fffdf8;
+      --ink: #1e1d1a;
+      --muted: #5d5a52;
+      --accent: #b5542f;
+      --accent-2: #1f6f78;
+      --line: #e5dac7;
+    }}
+    * {{ box-sizing: border-box; }}
+    body {{
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: linear-gradient(135deg, #f5f1e8 0%, #efe5d2 100%);
+      color: var(--ink);
+    }}
+    .wrap {{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }}
+    .hero {{
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    }}
+    h1 {{
+      margin: 0 0 8px;
+      font-size: 2.2rem;
+    }}
+    .sub {{
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }}
+    .headline {{
+      display: inline-block;
+      background: #fff0e8;
+      color: var(--accent);
+      border: 1px solid #f1c7b7;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: bold;
+    }}
+    .grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin: 24px 0 8px;
+    }}
+    .card {{
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+    }}
+    .label {{
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }}
+    .value {{
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: var(--accent-2);
+    }}
+    .section-title {{
+      margin: 34px 0 14px;
+      font-size: 1.4rem;
+    }}
+    .finding-list {{
+      display: grid;
+      gap: 16px;
+    }}
+    .finding {{
+      background: rgba(255,255,255,0.8);
+      border: 1px solid var(--line);
+      border-left: 6px solid var(--accent);
+      border-radius: 16px;
+      padding: 18px;
+    }}
+    .finding h3 {{
+      margin: 0 0 10px;
+      font-size: 1.1rem;
+    }}
+    .finding p {{
+      margin: 7px 0;
+      line-height: 1.5;
+    }}
+    .footer-note {{
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>CostPilot AI</h1>
+      <div class="sub">Enterprise Cost Intelligence and Autonomous Action Dashboard</div>
+      <div class="headline">Total Monthly Identified Impact: INR {total:,.0f}</div>
+      <div class="grid">
+        <div class="card">
+          <div class="label">Total Findings</div>
+          <div class="value">{len(findings)}</div>
+        </div>
+        {summary_cards}
+      </div>
+    </div>
+
+    <h2 class="section-title">Priority Findings</h2>
+    <div class="finding-list">
+      {finding_cards}
+    </div>
+
+    <div class="footer-note">
+      This prototype uses sample enterprise data. In a production setup, these inputs would come from ERP, procurement, SaaS administration, and operations systems.
+    </div>
+  </div>
+</body>
+</html>
+"""
+
+
+def analyze_datasets(
+    procurement_rows: list[dict[str, str]],
+    license_rows: list[dict[str, str]],
+    sla_rows: list[dict[str, str]],
+) -> list[Finding]:
+    findings: list[Finding] = []
+    findings.extend(detect_duplicate_spend(procurement_rows))
+    findings.extend(detect_rate_optimization(procurement_rows))
+    findings.extend(detect_unused_licenses(license_rows))
+    findings.extend(detect_sla_risks(sla_rows))
+    findings.sort(key=lambda item: item.estimated_savings, reverse=True)
+    return findings
+
+
+def build_agent_case(finding: Finding) -> AgentCase:
+    approval_required = finding.confidence != "High"
+
+    monitoring_response = {
+        "Procurement": "Detected a procurement pattern that may indicate duplicate or avoidable spend.",
+        "Vendor Rate": "Detected a pricing variance between current vendor rate and benchmark rate.",
+        "Software Usage": "Detected inactive or underutilized software licenses in current usage data.",
+        "SLA Risk": "Detected an operational signal indicating a likely SLA breach and potential penalty exposure.",
+    }.get(finding.category, "Detected a cost-related anomaly in enterprise operations data.")
+
+    impact_response = (
+        f"Estimated monthly financial impact is INR {finding.estimated_savings:,.0f} based on current data and business rules."
+    )
+
+    decision_response = {
+        "Procurement": "Recommended next step is to place the payment into review and notify finance for validation.",
+        "Vendor Rate": "Recommended next step is to open a vendor renegotiation or controlled vendor-shift workflow.",
+        "Software Usage": "Recommended next step is to route inactive licenses for manager approval before removal.",
+        "SLA Risk": "Recommended next step is to escalate, reassign workload, and prevent the expected penalty event.",
+    }.get(finding.category, finding.action)
+
+    if approval_required:
+        approval_response = "This case requires manager or finance approval before the action agent can execute the next step."
+        approval_status = "Waiting / Simulated Approval"
+        final_action = f"Approved simulation: {finding.action}"
+    else:
+        approval_response = "This case is classified as high-confidence and can move directly into an approval-ready action queue."
+        approval_status = "Auto-Qualified"
+        final_action = f"Auto-ready action: {finding.action}"
+
+    action_response = {
+        "Procurement": "Created a simulated finance exception case and prepared a payment-hold action.",
+        "Vendor Rate": "Created a simulated sourcing task for renegotiation and rate review.",
+        "Software Usage": "Created a simulated license cleanup task for the next billing cycle.",
+        "SLA Risk": "Created a simulated operations escalation and backup-queue reassignment task.",
+    }.get(finding.category, final_action)
+
+    audit_note = (
+        f"Audit trail captured: category={finding.category}, confidence={finding.confidence}, "
+        f"estimated_savings=INR {finding.estimated_savings:,.0f}, action='{finding.action}'."
+    )
+
+    return AgentCase(
+        finding=finding,
+        steps=[
+            AgentStep(
+                agent="Monitoring Agent",
+                status="Completed",
+                response=monitoring_response,
+            ),
+            AgentStep(
+                agent="Impact Agent",
+                status="Completed",
+                response=impact_response,
+            ),
+            AgentStep(
+                agent="Decision Agent",
+                status="Completed",
+                response=decision_response,
+            ),
+            AgentStep(
+                agent="Approval Agent",
+                status=approval_status,
+                response=approval_response,
+            ),
+            AgentStep(
+                agent="Action Agent",
+                status="Prepared",
+                response=action_response,
+            ),
+            AgentStep(
+                agent="Audit Agent",
+                status="Logged",
+                response=audit_note,
+            ),
+        ],
+        approval_required=approval_required,
+        final_action=final_action,
+        audit_note=audit_note,
+    )
+
+
+def build_agent_cases(findings: list[Finding]) -> list[AgentCase]:
+    return [build_agent_case(finding) for finding in findings]
+
+
 def main() -> None:
     procurement_rows = read_csv(DATA_DIR / "procurement_spend.csv")
     license_rows = read_csv(DATA_DIR / "resource_utilization.csv")
     sla_rows = read_csv(DATA_DIR / "sla_operations.csv")
 
-    findings = []
-    findings.extend(detect_duplicate_spend(procurement_rows))
-    findings.extend(detect_rate_optimization(procurement_rows))
-    findings.extend(detect_unused_licenses(license_rows))
-    findings.extend(detect_sla_risks(sla_rows))
-
-    findings.sort(key=lambda item: item.estimated_savings, reverse=True)
+    findings = analyze_datasets(procurement_rows, license_rows, sla_rows)
 
     report = build_report(findings)
     OUTPUT_DIR.mkdir(exist_ok=True)
     report_path = OUTPUT_DIR / "cost_intelligence_report.md"
+    dashboard_path = OUTPUT_DIR / "dashboard.html"
     report_path.write_text(report, encoding="utf-8")
+    dashboard_path.write_text(build_html_dashboard(findings), encoding="utf-8")
 
     print(report)
     print(f"Report also saved to: {report_path}")
+    print(f"Dashboard also saved to: {dashboard_path}")
 
 
 if __name__ == "__main__":
