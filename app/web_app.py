@@ -267,6 +267,36 @@ def ai_explanation(case: AgentCase) -> str:
     )
 
 
+def ai_prestart_message(case: AgentCase) -> str:
+    return (
+        f"This case is ready for review. Select Run Case to let the agents process the issue step by step."
+    )
+
+
+def ai_in_progress_message(case: AgentCase) -> str:
+    return (
+        f"The agents are reviewing this case now and passing information from detection to decision."
+    )
+
+
+def ai_approved_message(case: AgentCase) -> str:
+    return (
+        "The recommendation has been approved. The case can now move into execution, and the business can act on the identified savings opportunity."
+    )
+
+
+def ai_rejected_message(case: AgentCase) -> str:
+    return (
+        "The recommendation has been rejected, so no automatic action will be taken. This case should now move to manual business review for further investigation or a revised decision."
+    )
+
+
+def ai_waiting_approval_message(case: AgentCase) -> str:
+    return (
+        "The agents have completed their review. This case is now waiting for manager approval before the action can move forward."
+    )
+
+
 def render_results_page(findings: list[Finding], source_label: str) -> str:
     total = sum(item.estimated_savings for item in findings)
     agent_cases = build_agent_cases(findings)
@@ -591,27 +621,61 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
       border: 1px solid #f2d4a7;
       color: #8a5a00;
     }}
-    .chat-box {{
+    .summary-box {{
       margin-top: 12px;
       border: 1px solid var(--line);
-      border-radius: 16px;
+      border-radius: 14px;
       background: #f8fcfd;
       overflow: hidden;
       box-shadow: 0 6px 16px rgba(18, 43, 53, 0.04);
     }}
-    .chat-head {{
-      background: #e6f3f7;
+    .summary-head {{
+      background: #eef6f8;
       color: var(--primary);
       font-weight: bold;
-      padding: 12px 14px;
+      padding: 10px 14px;
       border-bottom: 1px solid var(--line);
     }}
-    .chat-body {{
-      padding: 14px;
+    .summary-body {{
+      padding: 12px 14px;
       line-height: 1.6;
+      opacity: 1;
+      transition: opacity 0.35s ease;
+      font-size: 0.98rem;
+    }}
+    .summary-body.fade {{
+      opacity: 0.35;
+    }}
+    .thinking {{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      font-weight: bold;
+    }}
+    .thinking-dots {{
+      display: inline-flex;
+      gap: 4px;
+    }}
+    .thinking-dots span {{
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--primary);
+      animation: blink 1.2s infinite ease-in-out;
+    }}
+    .thinking-dots span:nth-child(2) {{
+      animation-delay: 0.15s;
+    }}
+    .thinking-dots span:nth-child(3) {{
+      animation-delay: 0.3s;
+    }}
+    @keyframes blink {{
+      0%, 80%, 100% {{ opacity: 0.25; transform: scale(0.9); }}
+      40% {{ opacity: 1; transform: scale(1); }}
     }}
     .approval-actions.hidden,
-    .chat-box.hidden,
+    .summary-box.hidden,
     .approval-box.hidden {{
       display: none;
     }}
@@ -735,6 +799,20 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
     </div>
   </div>
   <script>
+    function setSummaryState(caseId, message) {{
+      const summaryBox = document.getElementById(`summary-box-${{caseId}}`);
+      const summaryBody = document.getElementById(`summary-body-${{caseId}}`);
+      if (!summaryBox || !summaryBody) return;
+
+      summaryBox.classList.remove('hidden');
+      summaryBody.classList.add('fade');
+
+      setTimeout(() => {{
+        summaryBody.innerHTML = message;
+        summaryBody.classList.remove('fade');
+      }}, 100);
+    }}
+
     function showCase(caseId) {{
       document.querySelectorAll('.case-tab').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.case-panel').forEach(panel => panel.classList.remove('active'));
@@ -746,23 +824,31 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
       const steps = document.querySelectorAll(`#case-${{caseId}} .step`);
       const approvalActions = document.getElementById(`approval-actions-${{caseId}}`);
       const approvalBox = document.getElementById(`approval-box-${{caseId}}`);
-      const chatBox = document.getElementById(`chat-box-${{caseId}}`);
+      const summaryBox = document.getElementById(`summary-box-${{caseId}}`);
+      const summaryBody = document.getElementById(`summary-body-${{caseId}}`);
       steps.forEach(step => step.classList.remove('active'));
       if (approvalActions) approvalActions.classList.add('hidden');
       if (approvalBox) approvalBox.classList.add('hidden');
-      if (chatBox) chatBox.classList.add('hidden');
+      if (summaryBox) summaryBox.classList.add('hidden');
       steps.forEach((step, index) => {{
         setTimeout(() => {{
           step.classList.add('active');
           if (needsApproval && index === 3 && approvalActions) {{
             approvalActions.classList.remove('hidden');
+            if (summaryBody) {{
+              const waitingMessage = summaryBody.getAttribute('data-waiting');
+              if (waitingMessage) setSummaryState(caseId, waitingMessage);
+            }}
           }}
-          if (!needsApproval && index === steps.length - 1 && chatBox) {{
+          if (!needsApproval && index === steps.length - 1 && summaryBox) {{
             setTimeout(() => {{
-              chatBox.classList.remove('hidden');
-            }}, 500);
+              if (summaryBody) {{
+                const finalMessage = summaryBody.getAttribute('data-default');
+                if (finalMessage) setSummaryState(caseId, finalMessage);
+              }}
+            }}, 100);
           }}
-        }}, index * 550);
+        }}, index * 150);
       }});
     }}
 
@@ -772,7 +858,7 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
       const approvalResponse = document.getElementById(`approval-agent-response-${{caseId}}`);
       const actionStatus = document.getElementById(`action-agent-status-${{caseId}}`);
       const actionResponse = document.getElementById(`action-agent-response-${{caseId}}`);
-      const chatBox = document.getElementById(`chat-box-${{caseId}}`);
+      const summaryBody = document.getElementById(`summary-body-${{caseId}}`);
       if (!approvalBox || !approvalStatus || !approvalResponse || !actionStatus || !actionResponse) return;
       approvalBox.classList.remove('hidden');
 
@@ -784,6 +870,10 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
         actionStatus.textContent = 'Ready';
         actionStatus.className = 'step-status prepared';
         actionResponse.textContent = 'Action Agent prepared the approved execution step.';
+        if (summaryBody) {{
+          const approvedMessage = summaryBody.getAttribute('data-approved');
+          if (approvedMessage) setSummaryState(caseId, approvedMessage);
+        }}
       }} else {{
         approvalBox.innerHTML = '<strong>Manager Approval Simulation:</strong> Rejected. Workflow is returned for manual business review.';
         approvalStatus.textContent = 'Rejected';
@@ -792,11 +882,10 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
         actionStatus.textContent = 'Paused';
         actionStatus.className = 'step-status waiting';
         actionResponse.textContent = 'Execution paused because approval was not granted.';
-      }}
-      if (chatBox) {{
-        setTimeout(() => {{
-          chatBox.classList.remove('hidden');
-        }}, 500);
+        if (summaryBody) {{
+          const rejectedMessage = summaryBody.getAttribute('data-rejected');
+          if (rejectedMessage) setSummaryState(caseId, rejectedMessage);
+        }}
       }}
     }}
   </script>
@@ -847,9 +936,17 @@ def render_case_panel(index: int, case: AgentCase) -> str:
       </div>
       {steps_html}
       {approval_box}
-      <div class="chat-box hidden" id="chat-box-{index}">
-        <div class="chat-head">AI Agent Explanation</div>
-        <div class="chat-body">{ai_explanation(case)}</div>
+      <div class="summary-box hidden" id="summary-box-{index}">
+        <div class="summary-head">Case Summary</div>
+        <div
+          class="summary-body"
+          id="summary-body-{index}"
+          data-default="{ai_explanation(case)}"
+          data-in-progress="{ai_in_progress_message(case)}"
+          data-waiting="{ai_waiting_approval_message(case)}"
+          data-approved="{ai_approved_message(case)}"
+          data-rejected="{ai_rejected_message(case)}"
+        >{ai_prestart_message(case)}</div>
       </div>
       </div>
     </div>
