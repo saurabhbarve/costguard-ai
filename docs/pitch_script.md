@@ -1,78 +1,44 @@
-
+# Pitch Script
 
 ## Title
-CostPilot AI: Enterprise Cost Intelligence and Autonomous Action
+CostPilot AI
 
 ## Script
-
 Hello everyone.
 
-Our solution is called **CostPilot AI**.
+I built CostPilot AI for Problem Statement 3: AI for Enterprise Cost Intelligence and Autonomous Action.
 
-We built this for Problem Statement 3:
-**AI for Enterprise Cost Intelligence and Autonomous Action**.
+The problem is straightforward.
+Enterprises lose money through repeated issues like duplicate invoices, poor vendor pricing, unused licenses, and SLA penalties.
 
-The problem is simple.
-Companies lose money in many small ways every day.
+The bigger issue is timing.
+Most teams find these problems after the financial impact has already happened.
 
-For example:
-- duplicate invoices
-- high vendor rates
-- unused software licenses
-- SLA penalties
+CostPilot AI is designed to solve that.
 
-Most companies find these problems too late.
-By that time, the money is already lost.
+It is a multi-agent system that monitors enterprise data, detects leakage, calculates business impact, and moves the case toward the next action inside an approval-based workflow.
 
-CostPilot AI solves this problem.
+So this is not just a reporting tool.
+It is a workflow-driven cost intelligence system.
 
-It is an AI system that checks enterprise data continuously, finds cost leakage, calculates the savings, and starts the next action through an approval flow.
+The prototype shows six connected roles:
+- Monitoring Agent
+- Impact Agent
+- Decision Agent
+- Approval Agent
+- Action Agent
+- Audit Agent
 
-So this is not only a dashboard.
-It is a system that can detect, decide, and act.
+Each role handles one part of the case, and together they move it from detection to action.
 
-I come from a Business Analyst background in the insurance domain, so I approached this solution from a real enterprise workflow perspective.
+In the sample prototype, the system identifies savings opportunities across procurement, software usage, vendor pricing, and SLA risk.
 
-In my experience, process delays, missed checks, workflow gaps, and operational inefficiencies create both cost impact and customer impact.
-That is why I focused this solution on practical business control, not only analytics.
+The value is not only visibility.
+The value is faster control, clearer decisions, and measurable impact.
 
-Here is how it works.
+My background is in business analysis and insurance operations, so I approached this problem from a process and control perspective.
 
-First, it reads data from procurement, software usage, and operations systems.
+The goal was to build something that feels realistic for enterprise use, not just technically impressive.
 
-Second, it detects problems like duplicate payments, expensive vendor rates, inactive licenses, and possible SLA breaches.
-
-Third, it calculates the business impact in simple numbers.
-
-For example:
-- how much money can be saved
-- how much penalty can be avoided
-- where cost can be reduced every month
-
-Fourth, it takes the next step.
-If the issue is low risk, it can create an action automatically.
-If the issue is medium or high risk, it sends it for approval.
-
-This is important because enterprises need AI systems that work with control and governance.
-
-In our demo, CostPilot AI identified more than **INR 2 lakh** in monthly savings using sample enterprise data.
-
-The value is not only savings.
-The value is also speed.
-
-Instead of waiting for monthly reviews, companies can find waste early and act before the loss happens.
-
-This creates clear business value:
-- lower cost
-- faster action
-- better auditability
-- measurable ROI
-
-CostPilot AI can start with one department, like procurement or customer support, and later scale across the enterprise.
-
-It can also be very relevant in insurance operations, where claims workflows, reconciliation checks, partner coordination, and SLA management all directly affect efficiency and cost.
-
-So in one line:
-CostPilot AI helps companies move from late reporting to early action.
-
-Thank you.
+In one line:
+CostPilot AI helps enterprises move from late reporting to early action.
