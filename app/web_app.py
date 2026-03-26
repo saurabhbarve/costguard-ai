@@ -540,6 +540,21 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
       margin-bottom: 14px;
       line-height: 1.5;
     }}
+    .info-stack {{
+      display: grid;
+      gap: 10px;
+      margin: 12px 0 14px;
+    }}
+    .info-box {{
+      background: #f8fcfd;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      line-height: 1.55;
+    }}
+    .info-box strong {{
+      color: var(--primary);
+    }}
     .plain-box {{
       background: #f8fcfd;
       border: 1px solid var(--line);
@@ -929,6 +944,10 @@ def render_case_panel(index: int, case: AgentCase) -> str:
       <h3>Case {index}: {case.finding.title}</h3>
       <div class="case-meta">
         Category: {case.finding.category} | Estimated Monthly Savings: INR {case.finding.estimated_savings:,.0f} | Approval Required: {"Yes" if case.approval_required else "No"}
+      </div>
+      <div class="info-stack">
+        <div class="info-box"><strong>Root Cause</strong><br>{case.root_cause}</div>
+        <div class="info-box"><strong>Fallback / Escalation</strong><br>{case.fallback_note}</div>
       </div>
       <div class="case-controls">
         <button class="workflow-btn" onclick="startWorkflow({index}, {'true' if case.approval_required else 'false'})">Run Case</button>

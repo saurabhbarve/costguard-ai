@@ -36,6 +36,8 @@ class AgentCase:
     approval_required: bool
     final_action: str
     audit_note: str
+    root_cause: str
+    fallback_note: str
 
 
 def read_csv(file_path: Path) -> list[dict[str, str]]:
@@ -426,6 +428,20 @@ def build_agent_case(finding: Finding) -> AgentCase:
         "SLA Risk": "Created a simulated operations escalation and backup-queue reassignment task.",
     }.get(finding.category, final_action)
 
+    root_cause = {
+        "Procurement": "Likely duplicate invoice entry or repeated payment request for the same service period.",
+        "Vendor Rate": "Current vendor pricing is above benchmark, suggesting contract drift or missing rate review.",
+        "Software Usage": "Licenses were provisioned but a portion of them are inactive, creating avoidable monthly spend.",
+        "SLA Risk": "Operational backlog and queue pressure are increasing the chance of missing the SLA window.",
+    }.get(finding.category, "Operational data indicates a cost leakage pattern with a likely process-control issue.")
+
+    fallback_note = {
+        "Procurement": "If payment hold cannot be applied automatically, escalate to finance operations for manual exception review.",
+        "Vendor Rate": "If renegotiation cannot proceed, escalate to sourcing or procurement leadership for contract review.",
+        "Software Usage": "If automatic cleanup is blocked, route the case to the application owner for seat validation.",
+        "SLA Risk": "If reassignment does not recover the timeline, escalate to the service manager with a recovery plan.",
+    }.get(finding.category, "If the action cannot proceed automatically, escalate for manual business review.")
+
     audit_note = (
         f"Audit trail captured: category={finding.category}, confidence={finding.confidence}, "
         f"estimated_savings=INR {finding.estimated_savings:,.0f}, action='{finding.action}'."
@@ -468,6 +484,8 @@ def build_agent_case(finding: Finding) -> AgentCase:
         approval_required=approval_required,
         final_action=final_action,
         audit_note=audit_note,
+        root_cause=root_cause,
+        fallback_note=fallback_note,
     )
 
 

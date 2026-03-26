@@ -32,10 +32,15 @@ Open in browser:
 http://127.0.0.1:8000
 ```
 
+### Hosting Note
+The current demo is designed for local prototype use. This still aligns with the hackathon guideline, which allows a local demo, cloud-hosted demo, or recorded walkthrough.
+
 ### What The Prototype Includes
 - upload-based CSV testing flow
 - sample analysis mode
 - case-by-case agent workflow
+- root cause view for each case
+- fallback / escalation path for each case
 - approval simulation
 - downloadable report and dashboard
 
