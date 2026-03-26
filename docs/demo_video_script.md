@@ -1,43 +1,28 @@
 # Demo Video Script
 
-## Opening
+## 3-Minute Demo
 Hello everyone.
 
-This is CostPilot AI, my solution for AI for Enterprise Cost Intelligence and Autonomous Action.
+This is CostPilot AI, my solution for Problem Statement 3: AI for Enterprise Cost Intelligence and Autonomous Action.
 
-## Problem
-Enterprises lose money through repeated operational leakages such as duplicate invoices, high vendor rates, unused licenses, and SLA penalties.
+The business problem is simple. Enterprises lose money through duplicate payments, poor vendor rates, unused licenses, and SLA breaches. These issues are usually found late, after the cost has already happened.
 
-Most of these issues are identified too late.
+My prototype shows how a multi-agent system can detect the issue, estimate business impact, decide the next step, pause for approval where needed, and move the case toward action.
 
-## What The Prototype Shows
-This prototype shows how a multi-agent system can:
-- detect a cost issue
-- estimate business impact
-- decide the next step
-- move the case through approval and action flow
+I start on the home screen. From here, I can either upload CSV files or use the built-in sample data. For the demo, I click Run Sample Analysis.
 
-## Demo Flow
-First, I open the local browser prototype.
+Now the results page opens. At the top, it shows the total estimated monthly savings from the current dataset. Below that, the prototype shows the agent roles. Each agent has a clear responsibility in the workflow, from monitoring to impact calculation, decision, approval, action, and audit logging.
 
-Next, I run the sample analysis.
+The next section shows savings by category. This helps the user quickly understand where the biggest cost opportunities are.
 
-The system shows the total estimated impact, savings by category, and individual cases.
+Now I move to the case section. On the left, I can see all detected cases. I select one case and click Run Case.
 
-Then I open one case.
+At this stage, the agents start processing the case step by step. The Monitoring Agent identifies the issue. The Impact Agent calculates the business impact. The Decision Agent recommends the next action. If the case is sensitive, the Approval Agent pauses the workflow until a manager decision is made.
 
-Here, the workflow is handled step by step by different agents:
-- Monitoring Agent
-- Impact Agent
-- Decision Agent
-- Approval Agent
-- Action Agent
-- Audit Agent
+I now click Approve Action. The workflow updates immediately, and the case moves forward.
 
-If approval is required, the case pauses until approval is given.
+At the end of the flow, the prototype shows a short Case Summary. This summary combines the issue, root cause, recommended action, and fallback path in one simple business view. This keeps the interface clean while still showing the full reasoning behind the decision.
 
-After the decision point, the prototype shows a short case summary.
+The key point of this solution is that the agents do not work in isolation. They pass information from one step to the next until the case reaches a controlled business outcome.
 
-## Close
-The main idea behind CostPilot AI is simple:
-not just detecting cost leakage, but moving the case toward controlled action with measurable business value.
+CostPilot AI is designed not just to identify waste, but to help enterprises act on it with measurable financial impact.

@@ -39,8 +39,7 @@ The current demo is designed for local prototype use. This still aligns with the
 - upload-based CSV testing flow
 - sample analysis mode
 - case-by-case agent workflow
-- root cause view for each case
-- fallback / escalation path for each case
+- case summary with issue, root cause, recommended action, and fallback path
 - approval simulation
 - downloadable report and dashboard
 
@@ -87,6 +86,8 @@ The workflow is designed as a connected agent system:
 - one agent manages approval logic
 - one agent prepares the action
 - one agent logs the workflow
+
+Each case is presented in a simple business flow so a non-technical reviewer can follow how agents pass the case from detection to decision.
 
 ## Impact Model
 The prototype estimates savings using simple business logic:

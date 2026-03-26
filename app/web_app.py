@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import cgi
+import html
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
@@ -242,58 +243,56 @@ def landing_page() -> str:
 </html>"""
 
 
-def ai_explanation(case: AgentCase) -> str:
+def case_summary_markup(case: AgentCase, stage_note: str) -> str:
     finding = case.finding
-    business_context = {
-        "Procurement": "It points to avoidable spend risk in a finance-controlled process.",
-        "Vendor Rate": "It suggests a recurring pricing issue that can continue to affect monthly cost.",
-        "Software Usage": "It shows that business value is lower than the cost currently being paid.",
-        "SLA Risk": "It indicates a likely service and penalty event if operations do not intervene in time.",
-    }.get(finding.category, "It indicates a meaningful cost and control issue.")
-
-    approval_note = (
-        "Because this case is not fully low-risk, the workflow should pause for approval before execution."
-        if case.approval_required
-        else "Because this case is high-confidence, it can move directly into an approval-ready action queue."
-    )
-
     return (
-        f"The business risk in this case is clear. "
-        f"The issue identified is: {finding.issue} "
-        f"{business_context} "
-        f"The estimated monthly impact is INR {finding.estimated_savings:,.0f}. "
-        f"My recommended next step is: {finding.action} "
-        f"{approval_note}"
+        f'<div class="summary-note">{stage_note}</div>'
+        f'<div class="summary-grid">'
+        f'<div class="summary-item"><strong>Issue</strong><span>{finding.issue}</span></div>'
+        f'<div class="summary-item"><strong>Root Cause</strong><span>{case.root_cause}</span></div>'
+        f'<div class="summary-item"><strong>Recommended Action</strong><span>{finding.action}</span></div>'
+        f'<div class="summary-item"><strong>Fallback / Escalation</strong><span>{case.fallback_note}</span></div>'
+        f'</div>'
     )
+
+
+def attr_escape(value: str) -> str:
+    return html.escape(value, quote=True)
 
 
 def ai_prestart_message(case: AgentCase) -> str:
-    return (
-        f"This case is ready for review."
-    )
+    return "This case is ready for review."
 
 
 def ai_in_progress_message(case: AgentCase) -> str:
-    return (
-        f"The agents are reviewing this case now and passing information from detection to decision."
+    return "The agents are reviewing this case now and passing information from detection to decision."
+
+
+def ai_explanation(case: AgentCase) -> str:
+    return case_summary_markup(
+        case,
+        f"Estimated monthly impact: INR {case.finding.estimated_savings:,.0f}. This case is ready for action."
     )
 
 
 def ai_approved_message(case: AgentCase) -> str:
-    return (
-        "The recommendation has been approved. The case can now move into execution, and the business can act on the identified savings opportunity."
+    return case_summary_markup(
+        case,
+        "Approved. The case can move into execution."
     )
 
 
 def ai_rejected_message(case: AgentCase) -> str:
-    return (
-        "The recommendation has been rejected, so no automatic action will be taken. This case should now move to manual business review for further investigation or a revised decision."
+    return case_summary_markup(
+        case,
+        "Rejected. The case moves to manual business review."
     )
 
 
 def ai_waiting_approval_message(case: AgentCase) -> str:
-    return (
-        "The agents have completed their review. This case is now waiting for manager approval before the action can move forward."
+    return case_summary_markup(
+        case,
+        f"Estimated monthly impact: INR {case.finding.estimated_savings:,.0f}. Waiting for manager approval."
     )
 
 
@@ -540,21 +539,6 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
       margin-bottom: 14px;
       line-height: 1.5;
     }}
-    .info-stack {{
-      display: grid;
-      gap: 10px;
-      margin: 12px 0 14px;
-    }}
-    .info-box {{
-      background: #f8fcfd;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px 14px;
-      line-height: 1.55;
-    }}
-    .info-box strong {{
-      color: var(--primary);
-    }}
     .plain-box {{
       background: #f8fcfd;
       border: 1px solid var(--line);
@@ -658,6 +642,29 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
       transition: opacity 0.35s ease;
       font-size: 0.98rem;
     }}
+    .summary-note {{
+      margin-bottom: 12px;
+      color: var(--muted);
+    }}
+    .summary-grid {{
+      display: grid;
+      gap: 10px;
+    }}
+    .summary-item {{
+      background: #ffffff;
+      border: 1px solid #e5eef1;
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: grid;
+      gap: 4px;
+    }}
+    .summary-item strong {{
+      color: var(--primary);
+      font-size: 0.92rem;
+    }}
+    .summary-item span {{
+      color: var(--ink);
+    }}
     .summary-body.fade {{
       opacity: 0.35;
     }}
@@ -753,7 +760,7 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
   <div class="wrap">
     <div class="hero">
       <div class="eyebrow">Results</div>
-      <h1>Simple Multi-Agent Cost Control Demo</h1>
+      <h1>CostPilot AI Workflow Demo</h1>
       <div class="sub">A simple view of how agents move a case from detection to action.</div>
       <div class="top-grid">
         <div class="impact-card">
@@ -945,10 +952,6 @@ def render_case_panel(index: int, case: AgentCase) -> str:
       <div class="case-meta">
         Category: {case.finding.category} | Estimated Monthly Savings: INR {case.finding.estimated_savings:,.0f} | Approval Required: {"Yes" if case.approval_required else "No"}
       </div>
-      <div class="info-stack">
-        <div class="info-box"><strong>Root Cause</strong><br>{case.root_cause}</div>
-        <div class="info-box"><strong>Fallback / Escalation</strong><br>{case.fallback_note}</div>
-      </div>
       <div class="case-controls">
         <button class="workflow-btn" onclick="startWorkflow({index}, {'true' if case.approval_required else 'false'})">Run Case</button>
         {approval_controls}
@@ -960,11 +963,11 @@ def render_case_panel(index: int, case: AgentCase) -> str:
         <div
           class="summary-body"
           id="summary-body-{index}"
-          data-default="{ai_explanation(case)}"
-          data-in-progress="{ai_in_progress_message(case)}"
-          data-waiting="{ai_waiting_approval_message(case)}"
-          data-approved="{ai_approved_message(case)}"
-          data-rejected="{ai_rejected_message(case)}"
+          data-default="{attr_escape(ai_explanation(case))}"
+          data-in-progress="{attr_escape(ai_in_progress_message(case))}"
+          data-waiting="{attr_escape(ai_waiting_approval_message(case))}"
+          data-approved="{attr_escape(ai_approved_message(case))}"
+          data-rejected="{attr_escape(ai_rejected_message(case))}"
         >{ai_prestart_message(case)}</div>
       </div>
       </div>
