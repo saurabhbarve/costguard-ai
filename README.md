@@ -33,7 +33,7 @@ http://127.0.0.1:8000
 ```
 
 ### Hosting Note
-The current demo is designed for local prototype use. This still aligns with the hackathon guideline, which allows a local demo, cloud-hosted demo, or recorded walkthrough.
+The current demo is designed for local prototype use.
 
 ### What The Prototype Includes
 - upload-based CSV testing flow
@@ -87,7 +87,7 @@ The workflow is designed as a connected agent system:
 - one agent prepares the action
 - one agent logs the workflow
 
-Each case is presented in a simple business flow so a non-technical reviewer can follow how agents pass the case from detection to decision.
+Each case is presented in a simple business flow so a non-technical people can follow how agents pass the case from detection to decision.
 
 ## Impact Model
 The prototype estimates savings using simple business logic:
