@@ -52,6 +52,9 @@ def landing_page() -> str:
       background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
       color: var(--ink);
     }
+    * {
+      box-sizing: border-box;
+    }
     .wrap {
       max-width: 1100px;
       margin: 0 auto;
@@ -88,6 +91,12 @@ def landing_page() -> str:
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 18px;
     }
+    .upload-card {
+      background: #f7fbfc;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+    }
     label {
       display: block;
       font-weight: bold;
@@ -95,7 +104,7 @@ def landing_page() -> str:
     }
     input[type="file"] {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       background: #fff;
       border: 1px solid var(--line);
       border-radius: 12px;
@@ -205,20 +214,19 @@ def landing_page() -> str:
     </div>
 
     <div class="panel">
-      <div class="eyebrow">Step 1</div>
-      <h2>Upload Your Own CSV Files</h2>
-      <p>Use your own sample datasets or keep using the built-in demo data. This flow is designed to feel like a simple business application rather than a developer tool.</p>
+      <h2>Upload CSV Files</h2>
+      <p>Use your own data or continue with the built-in sample analysis.</p>
       <form action="/analyze-upload" method="post" enctype="multipart/form-data">
         <div class="grid">
-          <div>
+          <div class="upload-card">
             <label for="procurement">Procurement Spend CSV</label>
             <input type="file" id="procurement" name="procurement">
           </div>
-          <div>
+          <div class="upload-card">
             <label for="licenses">Resource Utilization CSV</label>
             <input type="file" id="licenses" name="licenses">
           </div>
-          <div>
+          <div class="upload-card">
             <label for="sla">SLA Operations CSV</label>
             <input type="file" id="sla" name="sla">
           </div>
@@ -227,16 +235,6 @@ def landing_page() -> str:
           <button type="submit">Run Analysis</button>
         </div>
       </form>
-    </div>
-
-    <div class="panel">
-      <div class="eyebrow">Step 2</div>
-      <h2>Expected CSV Structure</h2>
-      <ul>
-        <li>Procurement: vendor, invoice_id, invoice_amount, invoice_month, current_rate, benchmark_rate, monthly_units</li>
-        <li>Licenses: tool_name, licenses_purchased, licenses_active, monthly_cost_per_license</li>
-        <li>SLA: process_name, tickets_at_risk, risk_score, penalty_if_breached</li>
-      </ul>
     </div>
   </div>
 </body>
