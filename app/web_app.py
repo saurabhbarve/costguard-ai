@@ -320,7 +320,7 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
         <div class="bar-row">
           <div class="bar-label">{category}</div>
           <div class="bar-track"><div class="bar-fill" style="width:{(value / max_value) * 100:.1f}%"></div></div>
-          <div class="bar-value">INR {value:,.0f}</div>
+          <div class="bar-value" data-base-value="{value:.2f}">INR {value:,.0f}</div>
         </div>
         """
         for category, value in savings.items()
@@ -340,7 +340,7 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
         <button class="case-tab {'active' if index == 1 else ''}" id="tab-{index}" onclick="showCase({index})">
           <span class="tab-number">Case {index}</span>
           <span class="tab-title">{case.finding.title}</span>
-          <span class="tab-save">INR {case.finding.estimated_savings:,.0f}</span>
+          <span class="tab-save" data-base-value="{case.finding.estimated_savings:.2f}">INR {case.finding.estimated_savings:,.0f}</span>
         </button>
         """
         for index, case in enumerate(agent_cases, start=1)
@@ -463,6 +463,28 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
       font-size: 1.5rem;
       font-weight: bold;
       color: var(--secondary);
+    }}
+    .view-switch {{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }}
+    .view-switch label {{
+      font-weight: bold;
+      color: rgba(255,255,255,0.9);
+    }}
+    .view-switch select {{
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.12);
+      color: white;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.95rem;
+    }}
+    .view-switch select option {{
+      color: var(--ink);
     }}
     .simple-grid {{
       display: grid;
@@ -776,9 +798,17 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
       <div class="sub">A simple view of how agents move a case from detection to action.</div>
       <div class="top-grid">
         <div class="impact-card">
-          <div>Estimated Monthly Savings</div>
-          <div class="big">INR {total:,.0f}</div>
-          <div style="margin-top:8px;">Data source: {source_label}</div>
+          <div id="impact-title">Estimated Monthly Savings</div>
+          <div class="big" id="impact-total" data-base-value="{total:.2f}">INR {total:,.0f}</div>
+          <div style="margin-top:8px;" id="impact-source">Data source: {source_label}</div>
+          <div class="view-switch">
+            <label for="period-view">View</label>
+            <select id="period-view" onchange="updatePeriodView()">
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
         </div>
         <div>
           <div class="summary-card">
@@ -804,17 +834,18 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
     </div>
 
     <div class="panel">
+      <div class="eyebrow">Impact</div>
+      <h2 id="impact-section-title">Monthly Savings by Category</h2>
+      <div class="sub" id="impact-section-note">All impact values shown in this prototype are monthly estimates based on the current dataset.</div>
+      {chart_rows}
+    </div>
+
+    <div class="panel">
       <div class="eyebrow">Agents</div>
       <h2>Agent Roles</h2>
       <div class="agent-grid">
         {agent_cards_html}
       </div>
-    </div>
-
-    <div class="panel">
-      <div class="eyebrow">Impact</div>
-      <h2>Savings by Category</h2>
-      {chart_rows}
     </div>
 
     <div class="panel">
@@ -852,6 +883,54 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
       document.querySelectorAll('.case-panel').forEach(panel => panel.classList.remove('active'));
       document.getElementById(`tab-${{caseId}}`).classList.add('active');
       document.getElementById(`case-panel-${{caseId}}`).classList.add('active');
+    }}
+
+    function formatCurrency(value) {{
+      return `INR ${{Math.round(value).toLocaleString('en-IN')}}`;
+    }}
+
+    function updatePeriodView() {{
+      const select = document.getElementById('period-view');
+      const period = select ? select.value : 'monthly';
+      const config = {{
+        monthly: {{
+          multiplier: 1,
+          impactTitle: 'Estimated Monthly Savings',
+          sectionTitle: 'Monthly Savings by Category',
+          sectionNote: 'All impact values shown in this prototype are monthly estimates based on the current dataset.',
+          caseLabel: 'Estimated Monthly Savings'
+        }},
+        quarterly: {{
+          multiplier: 3,
+          impactTitle: 'Estimated Quarterly Savings',
+          sectionTitle: 'Quarterly Savings by Category',
+          sectionNote: 'Quarterly values are derived by aggregating the monthly estimates over 3 months.',
+          caseLabel: 'Estimated Quarterly Savings'
+        }},
+        yearly: {{
+          multiplier: 12,
+          impactTitle: 'Estimated Yearly Savings',
+          sectionTitle: 'Yearly Savings by Category',
+          sectionNote: 'Yearly values are derived by aggregating the monthly estimates over 12 months.',
+          caseLabel: 'Estimated Yearly Savings'
+        }}
+      }}[period];
+
+      const impactTitle = document.getElementById('impact-title');
+      const impactSectionTitle = document.getElementById('impact-section-title');
+      const impactSectionNote = document.getElementById('impact-section-note');
+      if (impactTitle) impactTitle.textContent = config.impactTitle;
+      if (impactSectionTitle) impactSectionTitle.textContent = config.sectionTitle;
+      if (impactSectionNote) impactSectionNote.textContent = config.sectionNote;
+
+      document.querySelectorAll('[data-base-value]').forEach(node => {{
+        const baseValue = parseFloat(node.getAttribute('data-base-value') || '0');
+        node.textContent = formatCurrency(baseValue * config.multiplier);
+      }});
+
+      document.querySelectorAll('[data-base-case-label]').forEach(node => {{
+        node.textContent = config.caseLabel;
+      }});
     }}
 
     function startWorkflow(caseId, needsApproval) {{
@@ -924,6 +1003,10 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
         }}
       }}
     }}
+
+    document.addEventListener('DOMContentLoaded', () => {{
+      updatePeriodView();
+    }});
   </script>
 </body>
 </html>"""
@@ -964,7 +1047,10 @@ def render_case_panel(index: int, case: AgentCase) -> str:
       <div class="timeline-case" id="case-{index}">
       <h3>Case {index}: {case.finding.title}</h3>
       <div class="case-meta">
-        Category: {case.finding.category} | Estimated Monthly Savings: INR {case.finding.estimated_savings:,.0f} | Approval Required: {"Yes" if case.approval_required else "No"}
+        Category: {case.finding.category} |
+        <span data-base-case-label="true">Estimated Monthly Savings</span>:
+        <span data-base-value="{case.finding.estimated_savings:.2f}">INR {case.finding.estimated_savings:,.0f}</span> |
+        Approval Required: {"Yes" if case.approval_required else "No"}
       </div>
       <div class="case-controls">
         <button class="workflow-btn" onclick="startWorkflow({index}, {'true' if case.approval_required else 'false'})">Run Case</button>
