@@ -698,7 +698,8 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
     }}
     .approval-actions.hidden,
     .summary-box.hidden,
-    .approval-box.hidden {{
+    .approval-box.hidden,
+    .workflow-steps.hidden {{
       display: none;
     }}
     .hidden {{
@@ -844,10 +845,12 @@ def render_results_page(findings: list[Finding], source_label: str) -> str:
 
     function startWorkflow(caseId, needsApproval) {{
       const steps = document.querySelectorAll(`#case-${{caseId}} .step`);
+      const workflowSteps = document.getElementById(`workflow-steps-${{caseId}}`);
       const approvalActions = document.getElementById(`approval-actions-${{caseId}}`);
       const approvalBox = document.getElementById(`approval-box-${{caseId}}`);
       const summaryBox = document.getElementById(`summary-box-${{caseId}}`);
       const summaryBody = document.getElementById(`summary-body-${{caseId}}`);
+      if (workflowSteps) workflowSteps.classList.remove('hidden');
       steps.forEach(step => step.classList.remove('active'));
       if (approvalActions) approvalActions.classList.add('hidden');
       if (approvalBox) approvalBox.classList.add('hidden');
@@ -956,7 +959,9 @@ def render_case_panel(index: int, case: AgentCase) -> str:
         <button class="workflow-btn" onclick="startWorkflow({index}, {'true' if case.approval_required else 'false'})">Run Case</button>
         {approval_controls}
       </div>
-      {steps_html}
+      <div class="workflow-steps hidden" id="workflow-steps-{index}">
+        {steps_html}
+      </div>
       {approval_box}
       <div class="summary-box hidden" id="summary-box-{index}">
         <div class="summary-head">Case Summary</div>
