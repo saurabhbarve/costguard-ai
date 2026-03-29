@@ -243,15 +243,22 @@ def landing_page() -> str:
 </html>"""
 
 
-def case_summary_markup(case: AgentCase, stage_note: str) -> str:
+def case_summary_markup(
+    case: AgentCase,
+    stage_note: str,
+    recommended_action: str | None = None,
+    fallback_note: str | None = None,
+) -> str:
     finding = case.finding
+    action_text = recommended_action or finding.action
+    fallback_text = fallback_note or case.fallback_note
     return (
         f'<div class="summary-note">{stage_note}</div>'
         f'<div class="summary-grid">'
         f'<div class="summary-item"><strong>Issue</strong><span>{finding.issue}</span></div>'
         f'<div class="summary-item"><strong>Root Cause</strong><span>{case.root_cause}</span></div>'
-        f'<div class="summary-item"><strong>Recommended Action</strong><span>{finding.action}</span></div>'
-        f'<div class="summary-item"><strong>Fallback / Escalation</strong><span>{case.fallback_note}</span></div>'
+        f'<div class="summary-item"><strong>Recommended Action</strong><span>{action_text}</span></div>'
+        f'<div class="summary-item"><strong>Fallback / Escalation</strong><span>{fallback_text}</span></div>'
         f'</div>'
     )
 
@@ -278,14 +285,18 @@ def ai_explanation(case: AgentCase) -> str:
 def ai_approved_message(case: AgentCase) -> str:
     return case_summary_markup(
         case,
-        "Approved. The case can move into execution."
+        "Approved. The case can move into execution.",
+        recommended_action=f"Proceed with the approved step: {case.finding.action}",
+        fallback_note=f"If execution is blocked after approval, use the fallback path: {case.fallback_note}",
     )
 
 
 def ai_rejected_message(case: AgentCase) -> str:
     return case_summary_markup(
         case,
-        "Rejected. The case moves to manual business review."
+        "Rejected. The case moves to manual business review.",
+        recommended_action="Do not auto-execute this recommendation. Route the case to manual review and capture a revised business decision.",
+        fallback_note=f"Keep the case on hold and escalate through manual review. Original fallback path: {case.fallback_note}",
     )
 
 
