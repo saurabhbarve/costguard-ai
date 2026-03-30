@@ -1,6 +1,5 @@
 # Demo Video Script
 
-## 3-Minute Demo
 Hello everyone.
 
 This is CostPilot AI, my solution for Problem Statement 3: AI for Enterprise Cost Intelligence and Autonomous Action.
